@@ -31,9 +31,13 @@ class TilesCalculator implements DataPatchInterface
         $this->eavSetupFactory = $eavSetupFactory;
     }
 
+    /**
+     * Apply data patch
+     */
     public function apply()
     {
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
+
 
         $eavSetup->addAttribute(
             \Magento\Catalog\Model\Product::ENTITY,
@@ -68,7 +72,7 @@ class TilesCalculator implements DataPatchInterface
             'coverage_area',
             [
                 'type' => 'decimal',
-                'label' => 'Coverage Area',
+                'label' => 'Coverage',
                 'input' => 'text',
                 'frontend_class' => 'validate-zero-or-greater validate-number',
                 'source' => '',
@@ -90,27 +94,28 @@ class TilesCalculator implements DataPatchInterface
 
         $eavSetup->addAttribute(
             \Magento\Catalog\Model\Product::ENTITY,
-            'unit_of_price',
+            'unit_price',
             [
                 'type' => 'int',
                 'backend' => '',
                 'frontend' => '',
-                'label' => 'Unit of Price',
+                'label' => 'Unit Price',
                 'input' => 'select',
                 'class' => '',
-                'source' => 'PF\TilesCalculator\Model\Config\Source\CalculatorGroupOption',
-                'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'source' => 'PF\TilesCalculator\Model\Config\Source\CustomAttributeOptions',
+                'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
                 'visible' => true,
                 'required' => false,
                 'user_defined' => true,
                 'searchable' => false,
                 'filterable' => false,
                 'comparable' => false,
-                'visible_on_front' => false,
+                'visible_on_front' => true,
                 'used_in_product_listing' => false,
                 'unique' => false,
                 'apply_to' => '',
                 'system' => 0,
+                'note' => 'You can ignore this to use default setting.',
                 'group' => 'Calculator Settings'
             ]
         );

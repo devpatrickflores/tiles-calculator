@@ -6,7 +6,7 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="PF_TilesCalculator::tilescalculatorconfig" title="PF Tiles Calculator"/>
+                            <resource id="PF_TilesCalculator::pricecalculatorconfig" title="PF TilesCalculator"/>
                         </resource>
                     </resource>
                 </resource>

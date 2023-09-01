@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Pricing\Render\Amount">
+		<plugin disabled="false" name="pf_pricecalculator_plugin_amount" sortOrder="10" type="PF\TilesCalculator\Plugin\Amount" />
+	</type>
+	<type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+		<plugin name="flooring_to_order_item" type="PF\TilesCalculator\Plugin\ToOrderItem" />
+	</type>
+    <type name="Magento\Quote\Model\Quote\Item">
+        <plugin name="pf_pricecalculator_plugin_quote_item" type="PF\TilesCalculator\Plugin\Item" />
+    </type>
+    <preference for="PF\TilesCalculator\Api\PostManagementInterface" type="PF\TilesCalculator\Model\PostManagement"/>
+</config>

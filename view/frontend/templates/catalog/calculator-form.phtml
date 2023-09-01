@@ -1,0 +1,230 @@
+<script>
+    requirejs(['jquery', 'underscore', 'PF_TilesCalculator/js/calculator', 'Magento_Catalog/js/price-utils', 'mage/url'],
+        function (jQuery, _, flooring, priceUtils, urlBuilder) {
+
+            jQuery(window).on('load', function() {
+                jQuery(".product-options-wrapper .swatch-opt").click(function () {
+                    getswatchproductvalue();
+                });
+                jQuery(".product-options-wrapper select[id^='attribute']").last().on('change', function() {
+                    setTimeout(function (){
+                        getdropdownproductvalue();
+                    }, 500);
+                });
+            });  
+
+            function getdropdownproductvalue() {
+                var customLink = urlBuilder.build('pricecalculator/index/index');
+                simpleId=jQuery("input[name=selected_configurable_option]").val();
+                ajaxCall(simpleId);
+            }  
+
+            function getswatchproductvalue() {
+                simpleId=jQuery("input[name=selected_configurable_option]").val();
+                var customLink = urlBuilder.build('pricecalculator/index/index');
+                var selected_options = {};
+                jQuery('div.swatch-attribute').each(function (k, v) {
+                    var attribute_id = jQuery(v).attr('data-attribute-id');
+                    var option_selected = jQuery(v).attr('data-option-selected');
+
+                    if (!attribute_id || !option_selected) {
+                        return;
+                    }
+                    selected_options[attribute_id] = option_selected;
+                });
+
+                var product_id_index = jQuery('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+                var found_ids = [];
+
+                jQuery.each(product_id_index, function (product_id, attributes) {
+                    var productIsSelected = function (attributes, selected_options) {
+                        return _.isEqual(attributes, selected_options);
+                    }
+                    if (productIsSelected(attributes, selected_options)) {
+                        found_ids.push(product_id);
+                    }
+                });
+                var new_found_ids = found_ids[0];
+                var val = parseInt(jQuery('#qty').val());
+                ajaxCall(new_found_ids);
+            }
+            function ajaxCall(product_id_value){
+                var customLink = urlBuilder.build('pricecalculator/index/index');
+                jQuery.ajax({
+                    url: customLink,
+                    data: {test: product_id_value},
+                    type: "POST",
+                }).done(function (data) {
+                    updateConfigValue(data);
+                    var added = 0;
+                    var total = 0;
+                });
+
+                function updateConfigValue($result) {
+                    flooring.coverage = parseFloat($result.product_covrage_price); // get from product
+                    flooring.price = $result.product_price;// get from product
+                    flooring.taxPercent = $result.product_tax_per * 1; // get from product
+                    flooring.unitPrice = $result.unit_price; // get from product
+                    flooring.load();
+                    flooring.getFromSqmInput();
+                }
+            }
+        });
+</script>
+
+<?php
+
+/**
+ * @var $block \Magecomp\Pricecalculator\Block\Product\Flooring
+ */
+$storeid = $block->getStoreId();
+$product = $block->getProduct();
+$coverage = $block->getCoverage();
+$config = $block->getFlooringConfig();
+$enable = $block->isEnabled($storeid);
+$objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
+$taxhelper = $objectmanager->get('Magento\Catalog\Helper\Data');
+$price = $taxhelper->getTaxPrice($product, $product->getFinalPrice(), true);
+if ($config && $coverage && $enable): ?>
+
+    <?php
+    $om = \Magento\Framework\App\ObjectManager::getInstance();
+    $storeManager = $om->get('Psr\Log\LoggerInterface');
+    $unit = $block->getConfig('pfcalculator/general/unit');
+    $displayType = $block->getConfig('tax/display/type');
+    $taxPercent = $product->getTaxPercent();
+    $includeTax = $block->getConfig('tax/calculation/price_includes_tax', true);
+    $wastage = trim($block->getConfig('pfcalculator/general/wastage', true));
+    $hasWastage = true;
+    $unitprice =  $product->getUnitPrice();
+	$unit_of_price = $product->getData('unit_price');
+    $unit_price_sh = $block->getConfig('tax/calculation/unit', true);
+
+	if($unit_of_price == "/sqm"){
+       $unit_of_price = "sqm/&#13217";
+       $unit_price_sh = "&#13217";
+    }
+	if($unit_of_price == "/pc"){
+       $unit_of_price = "pieces";
+       $unit_price_sh = "pcs";
+    }
+	if($unit_of_price == "/sheet"){
+       $unit_of_price = "sheets";
+       $unit_price_sh = "sheets";
+    }
+
+    if(isset($unitprice))
+    {
+        if($unitprice=='1')
+        {
+            $unit='Sqm/m²';
+        } elseif ($unitprice=='2')
+        {
+            $unit='Box/Package';
+        } else
+        {
+            $unit = $block->getConfig('pfcalculator/general/unit');
+        }
+
+    }
+    else{
+        $unit = $block->getConfig('pfcalculator/general/unit');
+    }
+    if ($wastage == '') {
+        $hasWastage = false;
+    }
+    if (strpos((string)$wastage, "%") === false) {
+        $wastage .= '%';
+    }
+
+    $rate = 1 + $taxPercent / 100;
+    if ($includeTax) {
+        $rate = 100 / ($taxPercent + 100);
+    }
+    $unitPrice = $block->isUnitPrice($storeid);
+    $productUnitPrice = $product->getAttributeText('unit_price');
+
+    if (!strpos(strtolower((string)$productUnitPrice), "package") === false) {
+        $unitPrice = false;
+    }
+    $coverage = (float)$product->getFlooringCoverage();
+    if ($unitPrice) {
+        $coverage = 1;
+    }
+
+    $samplePrice = floatval($block->getConfig('pfcalculator/general/sample_price'));
+
+    ?>
+
+    <div class="tiles-calculator">
+      <div class="tiles-qty-field">
+      	<div class="tiles-label"><span class="title"><?php echo __('Enter %1 needed: ', $unit_of_price) ?></span> <span class="tiles-or">or use area calculator</span></div>
+        <div class="tiles-input"><input type="number" id="flooring_input" class="input-text" name="flooring_input" placeholder="Qty or <?php echo __('%1', $unit_of_price) ?>" value=""/></div>
+        <?php if ($hasWastage) { ?>
+          <div class="tiles-wastage">
+            <div class="tiles-wastage-checkbox">
+              <input type="checkbox" price="0" id="wastage" name="wastage" class="checkbox">
+              <span><?php echo __('+ %1 for wastage', $wastage) ?></span>
+            </div>
+          </div>
+        <?php } ?>
+      </div>  
+      
+      <div class="tiles-area-calculator hide">
+        <div class="tiles-title">What is your project size in <?php echo __('%1', $unit_price_sh) ?>? </div>
+        <div id="tiles-area-form">
+          <div class="tiles-content-data">
+            <div class="tile-content tile-content-1"><input class="tile-width numbers-only" tabindex="-1" name="tile-width" type="text" placeholder="length"></div>
+            <div class="tile-content tile-content-2">x</div>
+            <div class="tile-content tile-content-3"><input class="tile-height numbers-only" tabindex="-1" name="tile-height" type="text" placeholder="width"></div>
+            <div class="tile-content tile-content-4">=</div>
+            <div class="tile-content tile-content-5"><input class="subtotal-tile-area" type="text" placeholder="<?php echo __('%1', $unit_of_price) ?>"  disabled=""></div>
+          </div>
+          <div class="tiles-submit">
+            <input class="use-qty" type="button" value="use this quantity">
+          </div>
+        </div>
+      </div>
+      
+      <div class="tiles-box-result">
+        <div class="tiles-actual">
+          <div class="tiles-field">
+            <span><?php echo __('Actual:', $unit) ?></span>
+            <span id="ActualSquareFeetContainer">0</span>
+          </div>
+        </div> 
+        <div class="tiles-box-price">
+          <div class="tiles-field">
+            <span><?php echo __('Box Price:') ?></span>
+            <span id="pricepersqm" style="display:none;"><?php if(isset($pricepersqm)): echo $pricepersqm; endif; ?></span>
+            <span><span id="CartonPriceContainer">0</span>/<?php echo __('%1', $unit_price_sh) ?></span>
+          </div>
+        </div> 
+        <div class="tiles-total-box">
+          <div class="tiles-field">
+            <span><?php echo __('Total Boxes:') ?></span>
+           <span id="TotalCartonContainer">0</span>
+          </div>
+        </div>
+         <div class="tiles-total-price">
+          <div class="tiles-field">
+            <span><?php echo __('Total Price:') ?></span>
+           <span id="TotalPriceContainer">0</span>
+          </div>
+        </div>
+      </div>
+
+	
+    </div>
+
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "CalculatorInit": <?php echo $config ?>
+        }
+    }
+
+    </script>
+<?php endif; ?>
+
+

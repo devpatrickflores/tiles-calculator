@@ -1,0 +1,148 @@
+.tiles-calculator {
+    margin-top: 50px;
+}
+
+.tiles-calculator .tiles-content-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tiles-calculator #tiles-area-form {
+    border: 1px solid;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.tiles-calculator #tiles-area-form .tiles-submit {
+    margin-right: 0;
+    margin-left: auto;
+    display: table;
+}
+
+.tiles-calculator #tiles-area-form .tiles-submit input.use-qty {
+    background: #2796cd;
+    border: 0;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    text-transform: capitalize;
+}
+
+.tiles-calculator #tiles-area-form .tiles-submit input.use-qty:hover {
+    background: #111;
+}
+
+.tiles-calculator .tiles-content-data input,
+.tiles-area-calculator .tiles-content-data input[disabled] {
+    color: #111;
+    border: 1px solid #777;
+    opacity: 1;
+}
+
+.tiles-calculator .tiles-content-data input::placeholder,
+.tiles-calculator .tiles-input input#flooring_input::placeholder {
+    color: #111;
+    opacity: 1;
+}
+
+.tiles-calculator .tiles-content-data input:-ms-input-placeholder,
+.tiles-calculator .tiles-input input#flooring_input:-ms-input-placeholder {
+    color: #111;
+}
+
+.tiles-calculator .tiles-content-data input::-ms-input-placeholder,
+.tiles-calculator .tiles-input input#flooring_input::-ms-input-placeholder {
+    color: #111;
+}
+
+.tiles-calculator .tile-content.tile-content-2,
+.tiles-calculator .tile-content.tile-content-4 {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 7px;
+    line-height: 1.4em;
+}
+
+.tiles-calculator .tiles-label {
+    font-size: 18px;
+    background: #494949;
+    color: #fff;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tiles-calculator .tiles-input {
+    padding: 10px;
+}
+
+.tiles-calculator .tiles-input input#flooring_input {
+    color: #111;
+    border: 1px solid #777;
+    opacity: 1;
+}
+
+.tiles-calculator .tiles-qty-field {
+    border: 1px solid;
+}
+
+.tiles-calculator .tiles-wastage-checkbox {
+    margin-left: auto;
+    margin-right: 10px;
+    display: table;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.tiles-calculator .tiles-or {
+    font-size: 16px;
+    font-weight: 400;
+    text-decoration: underline;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tiles-box-result {
+    background: #f0f0f0;
+    padding: 5px 10px;
+    margin-top: 20px;
+}
+
+.tiles-box-result .tiles-field {
+    font-size: 14px;
+    color: #111;
+    border-bottom: 1px solid #c6c6c6;
+    padding: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tiles-box-result .tiles-total-price .tiles-field {
+    font-size: 22px;
+    color: #111;
+    margin-top: 5px;
+    padding: 10px 5px;
+}
+
+.tiles-box-result .tiles-total-price .tiles-field {
+    border: 0;
+}
+
+.tiles-field span:last-child {
+    font-weight: bold;
+}
+
+.tiles-area-calculator {
+    margin-top: 20px;
+}
+
+.tiles-area-calculator .tiles-title {
+    font-size: 18px;
+    background: #494949;
+    color: #fff;
+    padding: 5px 10px;
+}

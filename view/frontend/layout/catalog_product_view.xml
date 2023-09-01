@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="PF_TilesCalculator::css/calculator.css"/>
+    </head>
+    <body>
+        <referenceBlock name="product.info.form.options">
+            <block template="PF_TilesCalculator::catalog/calculator-form.phtml" class="PF\TilesCalculator\Block\Product\CalculatorConfig" name="calculator.form" as="calculator_form" before="-"/>
+            <block template="PF_TilesCalculator::catalog/calculator-tierprices.phtml" class="PF\TilesCalculator\Block\Product\CalculatorConfig" name="calculator.form.tierprices" as="calculator_form_tierprices" before="calculator.form"/>
+        </referenceBlock>
+        <referenceContainer name="product.info.form.content">
+            <block template="PF_TilesCalculator::catalog/calculator-form.phtml" class="PF\TilesCalculator\Block\Product\CalculatorConfig" name="calculator.form" as="calculator_form" before="-"/>
+            <block template="PF_TilesCalculator::catalog/calculator-tierprices.phtml" class="PF\TilesCalculator\Block\Product\CalculatorConfig" name="calculator.form.tierprices" as="calculator_form_tierprices" before="calculator.form"/>
+        </referenceContainer>
+    </body>
+</page>

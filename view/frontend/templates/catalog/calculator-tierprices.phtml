@@ -1,0 +1,113 @@
+<?php
+
+
+$_product = $block->getProduct();
+$_tierPrices = $block->getTierPrices();
+
+
+$unit = $block->getConfig('pf_pricecalculator/general/unit');
+
+$customPriceEnable = 1;
+
+
+$countRange = count($_tierPrices);
+$coverage = (float)$_product->getCoverageArea();
+$finalPrice = $_product->getFinalPrice();
+
+$displayType = $block->getConfig('tax/display/type');
+$taxPercent = floatval($_product->getTaxPercent());
+$includeTax = $block->getConfig('tax/calculation/price_includes_tax', true);
+
+$rate = 1 + $taxPercent/100;
+
+if($includeTax){
+    $rate = 100/($taxPercent + 100);
+}
+
+$add = __('(Incl. Tax)');
+if($includeTax){
+    $add = __('(Excl. Tax)');
+}
+
+$multiply = 1;
+
+$unitPrice = $block->getConfig('pf_pricecalculator/general/unit_price', true);
+$productUnitPrice = $_product->getAttributeText('unit_price');
+if(!strpos(strtolower((string)$productUnitPrice), "package")===false){
+    $unitPrice = false;
+}
+
+if($unitPrice){
+    $multiply = $coverage;
+    $coverage = 1;
+}
+
+
+?>
+<?php if($block->isFlooring() && $block->isEnabledNewTierPrice()) { ?>
+<?php if (count($_tierPrices) > 0): ?>
+    <?php $_count = count((array) $_tierPrices)?>
+
+    <div style="margin-top:10px; clear: both;" id="tieredPriceTable" class="tieredPriceTable">
+        <table cellspacing="0" cellpadding="0" border="0" class="bglt">
+            <tr>
+                <td class="smalltext">
+                    <div class="listheadernosort"><span class="label"><label><?php echo __('%1 Qty', $unit)?></label></span></div>
+                </td>
+                <td class="smalltext">
+                    <div class="listheadernosort"><span class="label"><label><?php echo __('Box Price')?></label></span></div>
+                </td>
+                <?php if($displayType ==  3 && $rate != 1){ ?>
+                    <td class="smalltext">
+                        <div class="listheadernosort"><span class="label"><label><?php echo __('Box Price %1', $add)?></label></span></div>
+                    </td>
+                <?php } ?>
+                <td class="smalltext">
+                    <div class="listheadernosort"><span class="label"><label><?php echo __('%1 Price', $unit)?></label></span></div>
+                </td>
+                <?php if($displayType ==  3 && $rate != 1){ ?>
+                    <td class="smalltext">
+                        <div class="listheadernosort"><span class="label"><label><?php echo __('%1 Price %2', $unit, $add)?></label></span></div>
+                    </td>
+                <?php } ?>
+            </tr>
+
+
+            <tr class="tierRow">
+                <td class="texttable"><span class="label"><label><?php echo __('Less than')?> <?php echo ceil($_tierPrices[0]['price_qty'] * $coverage).' '.$unit?></label></span></td>
+                <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($finalPrice * $multiply) ?></label></span></td>
+                <?php if($displayType ==  3 && $rate != 1){ ?>
+                    <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($rate * $finalPrice * $multiply) ?></label></span></td>
+                <?php } ?>
+                <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($finalPrice / $coverage)?></label></span></td>
+                <?php if($displayType ==  3 && $rate != 1){ ?>
+                    <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($rate*$finalPrice / $coverage)?></label></span></td>
+                <?php } ?>
+            </tr>
+
+
+            <?php  for($i=0;$i < $countRange; $i++): ?>
+                <tr class="">
+                    <?php if($i==$countRange-1): ?>
+                        <td class="texttable"><span class="label"><label><?php echo __('Over')?> <?php echo ceil($_tierPrices[$i]['price_qty'] * $coverage).' '.$unit?></label></span></td>
+                    <?php else: ?>
+                        <td class="texttable"><span class="label"><label><?php echo ceil($_tierPrices[$i]['price_qty'] * $coverage).' '.$unit." - ".ceil($_tierPrices[$i+1]['price_qty'] * $coverage).' '.$unit?></label></span></td>
+                    <?php endif;?>
+                    <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($_tierPrices[$i]['website_price'] * $multiply) ?></label></span></td>
+                    <?php if($displayType ==  3 && $rate != 1){ ?>
+                        <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($rate*$_tierPrices[$i]['website_price'] * $multiply) ?></label></span></td>
+                    <?php } ?>
+                    <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($_tierPrices[$i]['website_price'] / $coverage)?></label></span></td>
+                    <?php if($displayType ==  3 && $rate != 1){ ?>
+                        <td class="texttable"><span class="label"><label><?php echo $block->formatPrice($rate*$_tierPrices[$i]['website_price'] / $coverage)?></label></span></td>
+                    <?php } ?>
+                </tr>
+
+            <?php endfor;?>
+
+        </table>
+    </div>
+
+
+<?php endif;?>
+<?php } ?>
