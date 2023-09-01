@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="pfcalculator" translate="label" sortOrder="100" class="my-tab">
+            <label>Price Calculator</label>
+        </tab>
+        <section id="pf_tilescalculator" type="text" sortOrder="68" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <tab>pfcalculator</tab>
+            <label>Price Calculator</label>
+            <resource>PF_Pricecalculator::tilescalculatorconfig</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                 <field id="active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Price Calculator</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                </field>
+                <field id="unit" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Coverage Area</label>
+                    <validate>validate-no-html-tags required-entry</validate>
+                    <depends><field id="active">1</field></depends>
+                    <comment>Sqm, pieces, feet, yard, etc</comment>
+                </field>
+                <field id="wastage" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wastage Percentage</label>
+                    <validate>validate-number validate-not-negative-number validate-digits-range digits-range-0-100</validate>
+                    <depends><field id="active">1</field></depends>
+                    <comment>Please specify the percent (0-100) for Wastage. For example: 10. Leave empty to disable this option.</comment>
+                </field>
+                <field id="on_category" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable unit of price on product listing page?</label>
+                    <depends><field id="active">1</field></depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="yourprice" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Your price in product page</label>
+                    <depends><field id="active">1</field></depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

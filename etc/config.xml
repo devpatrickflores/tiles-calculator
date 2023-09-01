@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <pf_tilescalculator>
+            <general>
+                <active>1</active>
+                <unit>sqm</unit>
+                <wastage>10</wastage>
+                <on_category>1</on_category>
+                <yourprice>1</yourprice>
+            </general>
+        </pf_tilescalculator>
+    </default>
+</config>
